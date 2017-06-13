@@ -1,4 +1,4 @@
-package onslabs.kit.rxnetworx;
+package onsterlabs;
 
 import java.util.HashMap;
 

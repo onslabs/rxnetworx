@@ -1,4 +1,4 @@
-package onslabs.kit.rxnetworx;
+package onsterlabs;
 
 
 import com.google.gson.ExclusionStrategy;
@@ -80,7 +80,7 @@ public class RxNetworkClient {
                 })
                 .addInterceptor(httpLoggingInterceptor).writeTimeout(30, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS)
                 .build();
-//        okHttpClient.setAuthenticator(authAuthenticator);
+
 
         return new Retrofit.Builder()
                 .baseUrl(baseUrl)

@@ -1,4 +1,4 @@
-package onslabs.kit.rxnetworx;
+package onsterlabs;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
