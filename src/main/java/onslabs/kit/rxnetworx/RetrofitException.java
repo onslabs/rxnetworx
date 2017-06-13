@@ -8,7 +8,8 @@ import retrofit2.Converter;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 
-public class RetrofitException extends RuntimeException {
+public class
+RetrofitException extends RuntimeException {
 
     public static RetrofitException httpError(String url, Response response, Retrofit retrofit) {
         String message = response.code() + " " + response.message();
