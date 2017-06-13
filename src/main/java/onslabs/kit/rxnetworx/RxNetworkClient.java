@@ -78,7 +78,7 @@ public class RxNetworkClient {
 
 
                 })
-                .addNetworkInterceptor(httpLoggingInterceptor).writeTimeout(30, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS)
+                .addInterceptor(httpLoggingInterceptor).writeTimeout(30, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS)
                 .build();
 //        okHttpClient.setAuthenticator(authAuthenticator);
 

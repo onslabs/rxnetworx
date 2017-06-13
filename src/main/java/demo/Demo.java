@@ -17,8 +17,11 @@ import rx.functions.Action1;
 public class Demo {
     public static void main(String[] args) {
         System.out.println("Hi");
-        HashMap map = new HashMap();
-        Retrofit retrofit = RxNetworkClient.getRestAdapter(AppConstant.BASE_URL, map);
+        HashMap headerMap = new HashMap();
+        headerMap.put("app-type", "M");
+        headerMap.put("Content-Type", "application/json");
+        headerMap.put(AppConstant.AUTHORIZATION, AppConstant.APP_AUTHORIZATION);
+        Retrofit retrofit = RxNetworkClient.getRestAdapter(AppConstant.BASE_URL, headerMap);
         ILoginAPI iLoginAPI = (ILoginAPI) retrofit.create(ILoginAPI.class);
         Observable<LoginResponse> loginResponseObservable = iLoginAPI.loginRequesturl("ARN-1690", "password", "Best@123");
         RxEventBus.getInstance().register(LoginResponse.class, new Action1<LoginResponse>() {
