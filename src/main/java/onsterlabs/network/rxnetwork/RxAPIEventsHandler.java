@@ -1,6 +1,7 @@
-package onsterlabs.network;
+package onsterlabs.network.rxnetwork;
 
 
+import onsterlabs.network.rxnetwork.RetroError;
 import rx.functions.Action1;
 
 /**

@@ -1,4 +1,4 @@
-package onsterlabs.network;
+package onsterlabs.network.rxnetwork;
 
 
 import rx.Subscription;

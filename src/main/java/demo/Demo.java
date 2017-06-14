@@ -2,9 +2,9 @@ package demo;
 
 import java.util.HashMap;
 
-import onsterlabs.network.APISubscriber;
-import onsterlabs.network.RetroError;
-import onsterlabs.network.RxEventBus;
+import onsterlabs.network.rxnetwork.APISubscriber;
+import onsterlabs.network.rxnetwork.RetroError;
+import onsterlabs.network.rxnetwork.RxEventBus;
 import onsterlabs.network.RxNetworkClient;
 import retrofit2.Retrofit;
 import rx.Observable;
