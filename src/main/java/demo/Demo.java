@@ -5,7 +5,7 @@ import java.util.HashMap;
 import onsterlabs.network.rxnetwork.APISubscriber;
 import onsterlabs.network.rxnetwork.RetroError;
 import onsterlabs.network.rxnetwork.RxEventBus;
-import onsterlabs.network.RxNetworkClient;
+import onsterlabs.network.NetworkClient;
 import retrofit2.Retrofit;
 import rx.Observable;
 import rx.functions.Action1;
@@ -22,7 +22,7 @@ public class Demo {
         headerMap.put("app-type", "M");
         headerMap.put("Content-Type", "application/json");
         headerMap.put(AppConstant.AUTHORIZATION, AppConstant.APP_AUTHORIZATION);
-        Retrofit retrofit = RxNetworkClient.getRestAdapter(AppConstant.BASE_URL, headerMap);
+        Retrofit retrofit = NetworkClient.getRestAdapter(AppConstant.BASE_URL, headerMap);
         ILoginAPI iLoginAPI = (ILoginAPI) retrofit.create(ILoginAPI.class);
         Observable<LoginResponse> loginResponseObservable = iLoginAPI.loginRequesturl("ARN-1690", "password", "Best@123");
         RxEventBus.getInstance().register(LoginResponse.class, new Action1<LoginResponse>() {

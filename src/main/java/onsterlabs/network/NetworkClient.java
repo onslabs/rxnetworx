@@ -22,9 +22,9 @@ import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class RxNetworkClient {
+public class NetworkClient {
 
-    private RxNetworkClient() {
+    private NetworkClient() {
     }
 
     public static Retrofit getRestAdapter(final String baseUrl, final HashMap<String, String> requestHeaderMap) {
