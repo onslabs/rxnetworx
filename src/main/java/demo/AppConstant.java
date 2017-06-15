@@ -64,7 +64,7 @@ public class AppConstant {
     public static String BASIC_AUTHORIZATION = "Basic ZGlzdHJpYnV0b3ItY2xpZW50OnNlY3JldA==";
     public static String APP_AUTHORIZATION = "Basic ZGlzdHJpYnV0b3ItY2xpZW50OnNlY3JldA==";
     public static String AUTHORIZATION = "Authorization";
-    public static String BASE_URL = "https://hdfc-qa-kong.tothenew.com/authorization/";
+    public static String BASE_URL = "https://hdfc-uat-kong.tothenew.com/authorization/";
     public static boolean IS_HEADER_UPDATE = false;
     //Reinitaite Constants
     public static final String REINITIATE_REDEEM_DATA = "reInitiateRedeem";

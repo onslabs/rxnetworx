@@ -135,7 +135,7 @@ public class NetworkClient {
         try {
             CertificateFactory cf = CertificateFactory.getInstance("X.509");
 // From https://www.washington.edu/itconnect/security/ca/load-der.crt
-            InputStream caInput = new BufferedInputStream(new FileInputStream("src/qa-cert.crt"));
+            InputStream caInput = new BufferedInputStream(new FileInputStream("src/uat-cert.crt"));
             Certificate ca;
             try {
                 ca = cf.generateCertificate(caInput);
