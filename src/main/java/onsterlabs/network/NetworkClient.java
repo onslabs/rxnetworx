@@ -35,11 +35,15 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
+import javax.net.ssl.X509ExtendedTrustManager;
+import javax.net.ssl.X509TrustManager;
 
 public class NetworkClient {
 
     private static SSLContext mSSLContext;
+    private static X509TrustManager mTrustManager;
 
     private NetworkClient() {
     }
@@ -79,7 +83,7 @@ public class NetworkClient {
                 add(hostName, "sha256/U0hBMjU2IEZpbmdlcnByaW50PTgyOjA2OjA5OjZEOjYzOkFCOkFDOkQ2OjM5OjEz\n" +
                         "OjhGOjQ0OjFGOkY5OjJGOkZFOjBGOjRFOjVDOkE2OkU4OkJDOkU1OjUxOkU0OjJC\n" +
                         "OkU1OjI3OkZEOkQ5OkVEOjM3Cg==").build();
-        OkHttpClient client = new OkHttpClient.Builder().sslSocketFactory(mSSLContext.getSocketFactory())
+        OkHttpClient client = new OkHttpClient.Builder().sslSocketFactory(mSSLContext.getSocketFactory(), mTrustManager)
                 .addInterceptor(REWRITE_CACHE_CONTROL_INTERCEPTOR)
                 .addNetworkInterceptor(new Interceptor() {
                     @Override
@@ -150,6 +154,11 @@ public class NetworkClient {
             String tmfAlgorithm = TrustManagerFactory.getDefaultAlgorithm();
             TrustManagerFactory tmf = TrustManagerFactory.getInstance(tmfAlgorithm);
             tmf.init(keyStore);
+            for (TrustManager trustManager : tmf.getTrustManagers()) {
+                if (trustManager instanceof X509TrustManager) {
+                    mTrustManager = (X509TrustManager) trustManager;
+                }
+            }
 
 
 // Create an SSLContext that uses our TrustManager
@@ -157,7 +166,7 @@ public class NetworkClient {
             mSSLContext.init(null, tmf.getTrustManagers(), null);
         } catch (Exception ex) {
             ex.printStackTrace();
-            System.out.println("SOP"+ex.getLocalizedMessage());
+            System.out.println("SOP" + ex.getLocalizedMessage());
         }
 // Tell the URLConnection to use a SocketFactory from our SSLContext
 //        URL url = new URL("https://certs.cac.washington.edu/CAtest/");
