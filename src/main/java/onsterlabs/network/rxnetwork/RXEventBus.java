@@ -9,21 +9,21 @@ import rx.subjects.SerializedSubject;
 import rx.subjects.Subject;
 
 public class
-RxEventBus {
-    private static RxEventBus rxEventBus;
+RXEventBus {
+    private static RXEventBus RXEventBus;
 
-    private RxEventBus() {
+    private RXEventBus() {
 
     }
 
 
     private final Subject<Object, Object> mBusSubject = new SerializedSubject<>(PublishSubject.create());
 
-    public static RxEventBus getInstance() {
-        if (rxEventBus == null) {
-            rxEventBus = new RxEventBus();
+    public static RXEventBus getInstance() {
+        if (RXEventBus == null) {
+            RXEventBus = new RXEventBus();
         }
-        return rxEventBus;
+        return RXEventBus;
     }
 
     //Method to Subscribe

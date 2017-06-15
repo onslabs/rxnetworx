@@ -4,7 +4,7 @@ import java.util.HashMap;
 
 import onsterlabs.network.rxnetwork.APISubscriber;
 import onsterlabs.network.rxnetwork.RetroError;
-import onsterlabs.network.rxnetwork.RxEventBus;
+import onsterlabs.network.rxnetwork.RXEventBus;
 import onsterlabs.network.NetworkClient;
 import retrofit2.Retrofit;
 import rx.Observable;
@@ -25,14 +25,14 @@ public class Demo {
         Retrofit retrofit = NetworkClient.getRestAdapter(AppConstant.BASE_URL, headerMap);
         ILoginAPI iLoginAPI = (ILoginAPI) retrofit.create(ILoginAPI.class);
         Observable<LoginResponse> loginResponseObservable = iLoginAPI.loginRequesturl("ARN-1690", "password", "Best@123");
-        RxEventBus.getInstance().register(LoginResponse.class, new Action1<LoginResponse>() {
+        RXEventBus.getInstance().register(LoginResponse.class, new Action1<LoginResponse>() {
             @Override
             public void call(LoginResponse loginResponse) {
                 System.out.println("Success");
             }
         });
 
-        RxEventBus.getInstance().register(RetroError.class, new Action1<RetroError>() {
+        RXEventBus.getInstance().register(RetroError.class, new Action1<RetroError>() {
             @Override
             public void call(RetroError retroError) {
                 System.out.println("Failure");

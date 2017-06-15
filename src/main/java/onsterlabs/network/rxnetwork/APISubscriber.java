@@ -15,12 +15,12 @@ public class APISubscriber<T> extends Subscriber<T> {
 
     @Override
     public void onError(Throwable throwable) {
-        RxEventBus.getInstance().post(getRetroError(throwable));
+        RXEventBus.getInstance().post(getRetroError(throwable));
     }
 
     @Override
     public void onNext(T t) {
-        RxEventBus.getInstance().post(t);
+        RXEventBus.getInstance().post(t);
     }
 
     private RetroError getRetroError(Throwable throwable){
