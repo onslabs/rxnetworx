@@ -135,7 +135,7 @@ public class NetworkClient {
         try {
             CertificateFactory cf = CertificateFactory.getInstance("X.509");
 // From https://www.washington.edu/itconnect/security/ca/load-der.crt
-            InputStream caInput = new BufferedInputStream(new FileInputStream("src/uat-cert.crt"));
+            InputStream caInput = new BufferedInputStream(new FileInputStream("src/qa-cert.crt"));
             Certificate ca;
             try {
                 ca = cf.generateCertificate(caInput);
@@ -154,12 +154,7 @@ public class NetworkClient {
             String tmfAlgorithm = TrustManagerFactory.getDefaultAlgorithm();
             TrustManagerFactory tmf = TrustManagerFactory.getInstance(tmfAlgorithm);
             tmf.init(keyStore);
-            for (TrustManager trustManager : tmf.getTrustManagers()) {
-                if (trustManager instanceof X509TrustManager) {
-                    mTrustManager = (X509TrustManager) trustManager;
-                }
-            }
-
+            mTrustManager = (X509TrustManager) tmf.getTrustManagers()[0];
 
 // Create an SSLContext that uses our TrustManager
             mSSLContext = SSLContext.getInstance("TLS");
