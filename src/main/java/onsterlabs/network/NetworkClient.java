@@ -30,26 +30,39 @@ import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-
 import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
-import javax.net.ssl.X509ExtendedTrustManager;
 import javax.net.ssl.X509TrustManager;
 
 public class NetworkClient {
 
     private static SSLContext mSSLContext;
     private static X509TrustManager mTrustManager;
+    private static boolean isHttps;
 
     private NetworkClient() {
     }
 
-    public static Retrofit getRestAdapter(final String baseUrl, final HashMap<String, String> requestHeaderMap) {
-        createKeyStore();
+    /**
+     * @param baseUrl
+     * @param requestHeaderMap
+     * @param is               send input stream as  null if  cert file is not  present .
+     * @return
+     */
+    public static Retrofit getRestAdapter(final String baseUrl, final HashMap<String, String> requestHeaderMap, InputStream is) {
+        //If input stream is null then the cert file stream is not being provided by the android
+        //component .
+        if (is == null) {
+            isHttps = false;
+        } else {
+            isHttps = true;
+        }
+        if (isHttps) {
+            createKeyStore(is);
+        } else {
+            createKeyStore();
+        }
+
         HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor();
         httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.HEADERS);
         httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
@@ -128,7 +141,56 @@ public class NetworkClient {
         }
     };
 
+    /**
+     *
+     * @param is the input stream of the cert file
+     */
+    private static void createKeyStore(InputStream is) {
+        // Load CAs from an InputStream
+// (could be from a resource or ByteArrayInputStream or ...)
+        try {
+            CertificateFactory cf = CertificateFactory.getInstance("X.509");
+// From https://www.washington.edu/itconnect/security/ca/load-der.crt
+            //InputStream caInput = new BufferedInputStream(new FileInputStream("src/qa-cert.crt"));
+            Certificate ca;
+            try {
+                ca = cf.generateCertificate(is);
+                System.out.println("ca=" + ((X509Certificate) ca).getSubjectDN());
+            } finally {
+                is.close();
+            }
 
+// Create a KeyStore containing our trusted CAs
+            String keyStoreType = KeyStore.getDefaultType();
+            KeyStore keyStore = KeyStore.getInstance(keyStoreType);
+            keyStore.load(null, null);
+            keyStore.setCertificateEntry("ca", ca);
+
+// Create a TrustManager that trusts the CAs in our KeyStore
+            String tmfAlgorithm = TrustManagerFactory.getDefaultAlgorithm();
+            TrustManagerFactory tmf = TrustManagerFactory.getInstance(tmfAlgorithm);
+            tmf.init(keyStore);
+            mTrustManager = (X509TrustManager) tmf.getTrustManagers()[0];
+
+// Create an SSLContext that uses our TrustManager
+            mSSLContext = SSLContext.getInstance("TLS");
+            mSSLContext.init(null, tmf.getTrustManagers(), null);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            System.out.println("SOP" + ex.getLocalizedMessage());
+        }
+// Tell the URLConnection to use a SocketFactory from our SSLContext
+//        URL url = new URL("https://certs.cac.washington.edu/CAtest/");
+//        HttpsURLConnection urlConnection =
+//                (HttpsURLConnection)url.openConnection();
+//        urlConnection.setSSLSocketFactory(context.getSocketFactory());
+//        InputStream in = urlConnection.getInputStream();
+//        copyInputStreamToOutputStream(in, System.out);
+    }
+
+    /**
+     * This method is called when the input stream is null .
+     */
     private static void createKeyStore() {
         // Load CAs from an InputStream
 // (could be from a resource or ByteArrayInputStream or ...)

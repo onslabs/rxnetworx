@@ -22,7 +22,7 @@ public class Demo {
         headerMap.put("app-type", "M");
         headerMap.put("Content-Type", "application/json");
         headerMap.put(AppConstant.AUTHORIZATION, AppConstant.APP_AUTHORIZATION);
-        Retrofit retrofit = NetworkClient.getRestAdapter(AppConstant.BASE_URL, headerMap);
+        Retrofit retrofit = NetworkClient.getRestAdapter(AppConstant.BASE_URL, headerMap, null);
         ILoginAPI iLoginAPI = (ILoginAPI) retrofit.create(ILoginAPI.class);
         Observable<LoginResponse> loginResponseObservable = iLoginAPI.loginRequesturl("ARN-1690", "password", "Best@123");
         RXEventBus.getInstance().register(LoginResponse.class, new Action1<LoginResponse>() {
