@@ -54,6 +54,7 @@ public class NetworkClient {
         return getRestAdapter(baseUrl, requestHeaderMap, null);
     }
 
+    //Method not being used .
     public static Retrofit getRestAdapter(final String baseUrl, final HashMap<String, String> requestHeaderMap, InputStream is) {
         //If input stream is null then the cert file stream is not being provided by the android
         //component .
@@ -147,7 +148,7 @@ public class NetworkClient {
         }
     };
 
-    /**
+    /**Method not being used for the time being
      * @param is the input stream of the cert file
      * @param is the input stream of the cert file
      */
@@ -210,7 +211,7 @@ public class NetworkClient {
             /
              */
 
-            InputStream caInput = new BufferedInputStream(new FileInputStream("src/qa-cert.crt"));
+            InputStream caInput = new BufferedInputStream(new FileInputStream("src/prod-cert.crt"));
             //InputStream caInput = NetworkClient.class.getClassLoader().getResourceAsStream("src/qa-cert.crt");
             Certificate ca;
             try {
