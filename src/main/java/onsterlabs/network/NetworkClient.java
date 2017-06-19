@@ -11,6 +11,7 @@ import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.security.KeyStore;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateFactory;
@@ -30,6 +31,7 @@ import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
@@ -46,12 +48,16 @@ public class NetworkClient {
     /**
      * @param baseUrl
      * @param requestHeaderMap
-     * @param is               send input stream as  null if  cert file is not  present .
      * @return
      */
+    public static Retrofit getRestAdapter(final String baseUrl, final HashMap<String, String> requestHeaderMap) {
+        return getRestAdapter(baseUrl, requestHeaderMap, null);
+    }
+
     public static Retrofit getRestAdapter(final String baseUrl, final HashMap<String, String> requestHeaderMap, InputStream is) {
         //If input stream is null then the cert file stream is not being provided by the android
         //component .
+
         if (is == null) {
             isHttps = false;
         } else {
@@ -142,7 +148,7 @@ public class NetworkClient {
     };
 
     /**
-     *
+     * @param is the input stream of the cert file
      * @param is the input stream of the cert file
      */
     private static void createKeyStore(InputStream is) {
@@ -196,8 +202,16 @@ public class NetworkClient {
 // (could be from a resource or ByteArrayInputStream or ...)
         try {
             CertificateFactory cf = CertificateFactory.getInstance("X.509");
+            //file:///android_asset/test.html
 // From https://www.washington.edu/itconnect/security/ca/load-der.crt
+            /*new InputStreamReader(
+                        ClassLoader.getSystemClassLoader()
+                                   .getResourceAsStream("resource/test.txt"))
+            /
+             */
+
             InputStream caInput = new BufferedInputStream(new FileInputStream("src/qa-cert.crt"));
+            //InputStream caInput = NetworkClient.class.getClassLoader().getResourceAsStream("src/qa-cert.crt");
             Certificate ca;
             try {
                 ca = cf.generateCertificate(caInput);
@@ -223,7 +237,7 @@ public class NetworkClient {
             mSSLContext.init(null, tmf.getTrustManagers(), null);
         } catch (Exception ex) {
             ex.printStackTrace();
-            System.out.println("SOP" + ex.getLocalizedMessage());
+            System.out.println("SOP from no IS method " + ex.getLocalizedMessage());
         }
 // Tell the URLConnection to use a SocketFactory from our SSLContext
 //        URL url = new URL("https://certs.cac.washington.edu/CAtest/");
