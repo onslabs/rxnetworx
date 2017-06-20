@@ -44,24 +44,26 @@ public class NetworkClient {
 
     private NetworkClient() {
     }
+    //
 
     /**
      * @param baseUrl
      * @param requestHeaderMap
      * @return
      */
-    public static Retrofit getRestAdapter(final String baseUrl, final HashMap<String, String> requestHeaderMap) {
-        return getRestAdapter(baseUrl, requestHeaderMap, null);
+    public static Retrofit getRestAdapter(String buildVariant, final String baseUrl, final HashMap<String, String> requestHeaderMap) {
+        return getRestAdapter(buildVariant, baseUrl, requestHeaderMap, null);
+
     }
 
     /**
-     *
+     * @param buildVariant
      * @param baseUrl
      * @param requestHeaderMap
      * @param is
-     * @return the instance of retrofit
+     * @return
      */
-    public static Retrofit getRestAdapter(final String baseUrl, final HashMap<String, String> requestHeaderMap, InputStream is) {
+    public static Retrofit getRestAdapter(String buildVariant, final String baseUrl, final HashMap<String, String> requestHeaderMap, InputStream is) {
         //If input stream is null then the cert file stream is not being provided by the android
         //component .
 
@@ -73,7 +75,7 @@ public class NetworkClient {
         if (isHttps) {
             createKeyStore(is);
         } else {
-            createKeyStore();
+            createKeyStore(buildVariant);
         }
 
         HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor();
@@ -209,7 +211,7 @@ public class NetworkClient {
     /**
      * This method is called when the input stream is null .
      */
-    private static void createKeyStore() {
+    private static void createKeyStore(String buildVariant) {
         // Load CAs from an InputStream
 // (could be from a resource or ByteArrayInputStream or ...)
         try {
@@ -223,7 +225,9 @@ public class NetworkClient {
              */
 
             //InputStream caInput = new BufferedInputStream(new FileInputStream("src/qa-cert.crt"));
-            InputStream caInput = NetworkClient.class.getClassLoader().getResourceAsStream("certfiles/qa-cert.crt");
+            StringBuffer pathToCert = new StringBuffer("certfiles/" + buildVariant + "-cert.crt");
+            System.out.println("PATH TO CERT" + pathToCert.toString());
+            InputStream caInput = NetworkClient.class.getClassLoader().getResourceAsStream(pathToCert.toString());
             Certificate ca;
             try {
                 ca = cf.generateCertificate(caInput);
@@ -259,6 +263,8 @@ public class NetworkClient {
 //        InputStream in = urlConnection.getInputStream();
 //        copyInputStreamToOutputStream(in, System.out);
     }
+
+
 }
 
 
