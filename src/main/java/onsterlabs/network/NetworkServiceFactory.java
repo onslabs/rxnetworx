@@ -21,14 +21,14 @@ public class NetworkServiceFactory {
 
     public static <S> S getInstance(String buildVariant, String baseUrl, Class<S> serviceClass, HashMap requestHeaderMap, InputStream is) {
         if (sDataService == null) {
-            sDataService = new NetworkServiceFactory(NetworkClient.getRestAdapter(buildVariant, baseUrl, requestHeaderMap, is));
+            sDataService = new NetworkServiceFactory(NetworkClient.getRestAdapter(buildVariant, baseUrl, requestHeaderMap));
         }
         return sDataService.getClient(serviceClass);
     }
 
     public static <S> S getNewInstance(String buildVariant, String baseUrl, Class<S> serviceClass, HashMap requestHeaderMap, InputStream is) {
         sDataService = null;
-        sDataService = new NetworkServiceFactory(NetworkClient.getRestAdapter(buildVariant, baseUrl, requestHeaderMap, is));
+        sDataService = new NetworkServiceFactory(NetworkClient.getRestAdapter(buildVariant, baseUrl, requestHeaderMap));
 
         return sDataService.getClient(serviceClass);
     }
