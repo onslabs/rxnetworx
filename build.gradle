@@ -20,6 +20,13 @@ jar {
     manifest {
         attributes 'Main-Class': 'demo.Demo'
     }
+    ///opt/workspace/android/rxnetworx/src/main/java/onsterlabs/network
+    from('src/main/java/onsterlabs/network') {
+        include 'qa-cert.crt'
+
+
+    }
+
 }
 
 repositories {

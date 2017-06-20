@@ -19,10 +19,12 @@ public class Demo {
     public static void main(String[] args) {
         System.out.println("Hi");
         HashMap headerMap = new HashMap();
-        headerMap.put("app-type", "M");
-        headerMap.put("Content-Type", "application/json");
-        headerMap.put(AppConstant.AUTHORIZATION, AppConstant.APP_AUTHORIZATION);
 
+        headerMap.put("app-type", "W");
+        headerMap.put("Content-Type", "JSON");
+        headerMap.put("DUMMY", "DUMMY");
+        headerMap.put(AppConstant.AUTHORIZATION, AppConstant.APP_AUTHORIZATION);
+        headerMap.put("Content-Type", "application/x-www-form-urlencoded");
         Retrofit retrofit = NetworkClient.getRestAdapter(AppConstant.BASE_URL, headerMap, null);
 
         ILoginAPI iLoginAPI = (ILoginAPI) retrofit.create(ILoginAPI.class);

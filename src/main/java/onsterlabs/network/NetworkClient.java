@@ -103,8 +103,9 @@ public class NetworkClient {
                 add(hostName, "sha256/U0hBMjU2IEZpbmdlcnByaW50PTgyOjA2OjA5OjZEOjYzOkFCOkFDOkQ2OjM5OjEz\n" +
                         "OjhGOjQ0OjFGOkY5OjJGOkZFOjBGOjRFOjVDOkE2OkU4OkJDOkU1OjUxOkU0OjJC\n" +
                         "OkU1OjI3OkZEOkQ5OkVEOjM3Cg==").build();
-        OkHttpClient client = new OkHttpClient.Builder().sslSocketFactory(mSSLContext.getSocketFactory(), mTrustManager)
-                .addInterceptor(REWRITE_CACHE_CONTROL_INTERCEPTOR)
+        // sslSocketFactory(mSSLContext.getSocketFactory(), mTrustManager)
+        OkHttpClient client = new OkHttpClient.Builder().
+                sslSocketFactory(mSSLContext.getSocketFactory(), mTrustManager)
                 .addNetworkInterceptor(new Interceptor() {
                     @Override
                     public Response intercept(Chain chain) throws IOException {
@@ -125,7 +126,7 @@ public class NetworkClient {
 
 
                 })
-                .addInterceptor(httpLoggingInterceptor).writeTimeout(30, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS)
+                .addNetworkInterceptor(httpLoggingInterceptor).writeTimeout(30, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS)
                 .build();
 
 
@@ -137,6 +138,7 @@ public class NetworkClient {
                 .build();
     }
 
+    //Not being used currently
     private static final Interceptor REWRITE_CACHE_CONTROL_INTERCEPTOR = new Interceptor() {
         @Override
         public okhttp3.Response intercept(Chain chain) throws IOException {
@@ -148,7 +150,9 @@ public class NetworkClient {
         }
     };
 
-    /**Method not being used for the time being
+    /**
+     * Method not being used for the time being
+     *
      * @param is the input stream of the cert file
      * @param is the input stream of the cert file
      */
@@ -195,6 +199,8 @@ public class NetworkClient {
 //        copyInputStreamToOutputStream(in, System.out);
     }
 
+
+
     /**
      * This method is called when the input stream is null .
      */
@@ -211,8 +217,8 @@ public class NetworkClient {
             /
              */
 
-            InputStream caInput = new BufferedInputStream(new FileInputStream("src/prod-cert.crt"));
-            //InputStream caInput = NetworkClient.class.getClassLoader().getResourceAsStream("src/qa-cert.crt");
+            //InputStream caInput = new BufferedInputStream(new FileInputStream("src/qa-cert.crt"));
+            InputStream caInput = NetworkClient.class.getClassLoader().getResourceAsStream("certfiles/qa-cert.crt");
             Certificate ca;
             try {
                 ca = cf.generateCertificate(caInput);
