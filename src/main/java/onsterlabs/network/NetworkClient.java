@@ -47,23 +47,18 @@ public class NetworkClient {
     //
 
 
-
     /**
      * @param buildVariant
      * @param baseUrl
      * @param requestHeaderMap
-
      * @return
      */
     public static Retrofit getRestAdapter(String buildVariant, final String baseUrl, final HashMap<String, String> requestHeaderMap) {
         //If input stream is null then the cert file stream is not being provided by the android
         //component .
-        if(mTrustManager==null || mSSLContext==null){
+        if (mTrustManager == null || mSSLContext == null) {
             createKeyStore(buildVariant);
         }
-
-
-
         HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor();
         httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.HEADERS);
         httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
