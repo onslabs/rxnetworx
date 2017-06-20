@@ -19,14 +19,14 @@ public class NetworkServiceFactory {
         mRestClient = restClient;
     }
 
-    public static <S> S getInstance(String buildVariant, String baseUrl, Class<S> serviceClass, HashMap requestHeaderMap, InputStream is) {
+    public static <S> S getInstance(String buildVariant, String baseUrl, Class<S> serviceClass, HashMap requestHeaderMap) {
         if (sDataService == null) {
             sDataService = new NetworkServiceFactory(NetworkClient.getRestAdapter(buildVariant, baseUrl, requestHeaderMap));
         }
         return sDataService.getClient(serviceClass);
     }
 
-    public static <S> S getNewInstance(String buildVariant, String baseUrl, Class<S> serviceClass, HashMap requestHeaderMap, InputStream is) {
+    public static <S> S getNewInstance(String buildVariant, String baseUrl, Class<S> serviceClass, HashMap requestHeaderMap) {
         sDataService = null;
         sDataService = new NetworkServiceFactory(NetworkClient.getRestAdapter(buildVariant, baseUrl, requestHeaderMap));
 
