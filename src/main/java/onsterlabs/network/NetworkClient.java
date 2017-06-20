@@ -54,7 +54,13 @@ public class NetworkClient {
         return getRestAdapter(baseUrl, requestHeaderMap, null);
     }
 
-    //Method not being used .
+    /**
+     *
+     * @param baseUrl
+     * @param requestHeaderMap
+     * @param is
+     * @return the instance of retrofit
+     */
     public static Retrofit getRestAdapter(final String baseUrl, final HashMap<String, String> requestHeaderMap, InputStream is) {
         //If input stream is null then the cert file stream is not being provided by the android
         //component .
@@ -198,7 +204,6 @@ public class NetworkClient {
 //        InputStream in = urlConnection.getInputStream();
 //        copyInputStreamToOutputStream(in, System.out);
     }
-
 
 
     /**
