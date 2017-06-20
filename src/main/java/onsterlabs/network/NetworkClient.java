@@ -46,37 +46,23 @@ public class NetworkClient {
     }
     //
 
-    /**
-     * @param baseUrl
-     * @param requestHeaderMap
-     * @return
-     */
-    public static Retrofit getRestAdapter(String buildVariant, final String baseUrl, final HashMap<String, String> requestHeaderMap) {
-        return getRestAdapter(buildVariant, baseUrl, requestHeaderMap, null);
 
-    }
 
     /**
      * @param buildVariant
      * @param baseUrl
      * @param requestHeaderMap
-     * @param is
+
      * @return
      */
-    public static Retrofit getRestAdapter(String buildVariant, final String baseUrl, final HashMap<String, String> requestHeaderMap, InputStream is) {
+    public static Retrofit getRestAdapter(String buildVariant, final String baseUrl, final HashMap<String, String> requestHeaderMap) {
         //If input stream is null then the cert file stream is not being provided by the android
         //component .
-
-        if (is == null) {
-            isHttps = false;
-        } else {
-            isHttps = true;
-        }
-        if (isHttps) {
-            createKeyStore(is);
-        } else {
+        if(mTrustManager==null || mSSLContext==null){
             createKeyStore(buildVariant);
         }
+
+
 
         HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor();
         httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.HEADERS);
@@ -114,7 +100,7 @@ public class NetworkClient {
         // sslSocketFactory(mSSLContext.getSocketFactory(), mTrustManager)
         OkHttpClient client = new OkHttpClient.Builder().
                 sslSocketFactory(mSSLContext.getSocketFactory(), mTrustManager)
-                .addNetworkInterceptor(new Interceptor() {
+                .addInterceptor(new Interceptor() {
                     @Override
                     public Response intercept(Chain chain) throws IOException {
                         Request.Builder builder = chain.request().newBuilder();
