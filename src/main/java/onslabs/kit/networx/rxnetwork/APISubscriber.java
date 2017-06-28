@@ -2,6 +2,7 @@ package onslabs.kit.networx.rxnetwork;
 
 import java.io.IOException;
 
+import onslabs.kit.networx.RetroError;
 import retrofit2.Response;
 import retrofit2.adapter.rxjava.HttpException;
 import rx.Subscriber;

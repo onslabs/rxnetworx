@@ -1,6 +1,7 @@
 package onslabs.kit.networx.rxnetwork;
 
 
+import onslabs.kit.networx.RetroError;
 import rx.functions.Action1;
 
 /**

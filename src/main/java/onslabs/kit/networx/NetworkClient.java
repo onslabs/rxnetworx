@@ -56,10 +56,6 @@ public class NetworkClient {
      */
     public static Retrofit getRestAdapter(String buildVariant, final String baseUrl, final HashMap<String, String> requestHeaderMap, boolean isHttps) {
         mIsHttps = isHttps;
-        if (mIsHttps && baseUrl.contains("http://")) {
-            throw new IllegalArgumentException("is Https flag has been set to true and url is in http:// formal . " +
-                    "Please Rectify ");
-        }
         Retrofit retrofit;
         if (mIsHttps) {
             retrofit = createHttpsClient(buildVariant, baseUrl, requestHeaderMap);
@@ -99,10 +95,10 @@ public class NetworkClient {
             /
              */
             //Have kept qa-cert.crt in the src folder for testing purposes .
-            InputStream caInput = new BufferedInputStream(new FileInputStream("src/qa-cert.crt"));
-//            StringBuffer pathToCert = new StringBuffer("certfiles/" + buildVariant + "-cert.crt");
-//            System.out.println("PATH TO CERT"  + pathToCert.toString());
-//            InputStream caInput = NetworkClient.class.getClassLoader().getResourceAsStream(pathToCert.toString());
+            // InputStream caInput = new BufferedInputStream(new FileInputStream("src/qa-cert.crt"));
+            StringBuffer pathToCert = new StringBuffer("certfiles/" + buildVariant + "-cert.crt");
+            System.out.println("PATH TO CERT" + pathToCert.toString());
+            InputStream caInput = NetworkClient.class.getClassLoader().getResourceAsStream(pathToCert.toString());
             Certificate ca;
             try {
                 ca = cf.generateCertificate(caInput);

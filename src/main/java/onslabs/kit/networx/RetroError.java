@@ -1,4 +1,4 @@
-package onslabs.kit.networx.rxnetwork;
+package onslabs.kit.networx;
 
 import java.io.IOException;
 
