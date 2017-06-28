@@ -2,16 +2,11 @@ package demo;
 
 import java.util.HashMap;
 
-import onsterlabs.network.rxnetwork.APISubscriber;
-import onsterlabs.network.rxnetwork.RetroError;
-import onsterlabs.network.rxnetwork.RXEventBus;
-import onsterlabs.network.NetworkClient;
+import onslabs.kit.networx.NetworkClient;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
-import rx.Observable;
-import rx.functions.Action1;
 
 /**
  * Created by salil-kaul on 13/6/17.

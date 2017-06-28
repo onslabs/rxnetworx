@@ -1,6 +1,5 @@
-package onsterlabs.network;
+package onslabs.kit.networx;
 
-import java.io.InputStream;
 import java.util.HashMap;
 
 import retrofit2.Retrofit;

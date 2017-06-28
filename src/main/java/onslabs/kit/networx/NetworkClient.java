@@ -1,4 +1,4 @@
-package onsterlabs.network;
+package onslabs.kit.networx;
 
 
 import com.google.gson.ExclusionStrategy;
@@ -89,10 +89,10 @@ public class NetworkClient {
         }).create();
 
         String hostName = "hdfc-qa-kong.tothenew.com";
-        CertificatePinner certificatePinner = new CertificatePinner.Builder().
-                add(hostName, "sha256/U0hBMjU2IEZpbmdlcnByaW50PTgyOjA2OjA5OjZEOjYzOkFCOkFDOkQ2OjM5OjEz\n" +
-                        "OjhGOjQ0OjFGOkY5OjJGOkZFOjBGOjRFOjVDOkE2OkU4OkJDOkU1OjUxOkU0OjJC\n" +
-                        "OkU1OjI3OkZEOkQ5OkVEOjM3Cg==").build();
+//        CertificatePinner certificatePinner = new CertificatePinner.Builder().
+//                add(hostName, "sha256/U0hBMjU2IEZpbmdlcnByaW50PTgyOjA2OjA5OjZEOjYzOkFCOkFDOkQ2OjM5OjEz\n" +
+//                        "OjhGOjQ0OjFGOkY5OjJGOkZFOjBGOjRFOjVDOkE2OkU4OkJDOkU1OjUxOkU0OjJC\n" +
+//                        "OkU1OjI3OkZEOkQ5OkVEOjM3Cg==").build();
         // sslSocketFactory(mSSLContext.getSocketFactory(), mTrustManager)
         OkHttpClient client = new OkHttpClient.Builder().
                 sslSocketFactory(mSSLContext.getSocketFactory(), mTrustManager)
@@ -155,14 +155,11 @@ public class NetworkClient {
                                    .getResourceAsStream("resource/test.txt"))
             /
              */
-
-            File file = new File("test file");
-
-            //InputStream caInput = new BufferedInputStream(new FileInputStream("src/resources/certfiles/qa-cert.crt"));
-
-            StringBuffer pathToCert = new StringBuffer("certfiles/" + buildVariant + "-cert.crt");
-            System.out.println("PATH TO CERT"  + pathToCert.toString());
-            InputStream caInput = NetworkClient.class.getClassLoader().getResourceAsStream(pathToCert.toString());
+            //Have kept qa-cert.crt in the src folder for testing purposes .
+            InputStream caInput = new BufferedInputStream(new FileInputStream("src/qa-cert.crt"));
+//            StringBuffer pathToCert = new StringBuffer("certfiles/" + buildVariant + "-cert.crt");
+//            System.out.println("PATH TO CERT"  + pathToCert.toString());
+//            InputStream caInput = NetworkClient.class.getClassLoader().getResourceAsStream(pathToCert.toString());
             Certificate ca;
             try {
                 ca = cf.generateCertificate(caInput);
