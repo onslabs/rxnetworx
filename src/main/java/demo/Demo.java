@@ -6,6 +6,9 @@ import onsterlabs.network.rxnetwork.APISubscriber;
 import onsterlabs.network.rxnetwork.RetroError;
 import onsterlabs.network.rxnetwork.RXEventBus;
 import onsterlabs.network.NetworkClient;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import retrofit2.Retrofit;
 import rx.Observable;
 import rx.functions.Action1;
@@ -27,7 +30,7 @@ public class Demo {
         Retrofit retrofit = NetworkClient.getRestAdapter("qa", AppConstant.BASE_URL, headerMap);
 
         ILoginAPI iLoginAPI = (ILoginAPI) retrofit.create(ILoginAPI.class);
-        Observable<LoginResponse> loginResponseObservable = iLoginAPI.loginRequesturl("ARN-1690", "password", "Best@123");
+        /*Observable<LoginResponse> loginResponseObservable = iLoginAPI.loginRequesturl("ARN-1690", "password", "Best@123");
         RXEventBus.getInstance().register(LoginResponse.class, new Action1<LoginResponse>() {
             @Override
             public void call(LoginResponse loginResponse) {
@@ -41,8 +44,20 @@ public class Demo {
                 System.out.println("Failure");
             }
         });
-        loginResponseObservable.subscribe(new APISubscriber<LoginResponse>());
+        loginResponseObservable.subscribe(new APISubscriber<LoginResponse>());*/
 
 
+        Call<LoginResponse> loginResponseCall = iLoginAPI.loginRequesturlNoRX("ARN-1690", "password", "Best@123");
+        loginResponseCall.enqueue(new Callback<LoginResponse>() {
+            @Override
+            public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
+                System.out.println("Success");
+            }
+
+            @Override
+            public void onFailure(Call<LoginResponse> call, Throwable t) {
+                System.out.println("Failure");
+            }
+        });
     }
 }

@@ -8,6 +8,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.Expose;
 
 import java.io.BufferedInputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -54,9 +55,8 @@ public class NetworkClient {
      * @return
      */
     public static Retrofit getRestAdapter(String buildVariant, final String baseUrl, final HashMap<String, String> requestHeaderMap) {
-        //If input stream is null then the cert file stream is not being provided by the android
-        //component .
-        //Sample Comment
+
+        //Create the trust manager only once
         if (mTrustManager == null || mSSLContext == null) {
             createKeyStore(buildVariant);
         }
@@ -124,7 +124,6 @@ public class NetworkClient {
                 .baseUrl(baseUrl)
                 .client(client)
                 .addConverterFactory(GsonConverterFactory.create(gson))
-                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                 .build();
     }
 
@@ -157,9 +156,12 @@ public class NetworkClient {
             /
              */
 
-            //InputStream caInput = new BufferedInputStream(new FileInputStream("src/qa-cert.crt"));
+            File file = new File("test file");
+
+            //InputStream caInput = new BufferedInputStream(new FileInputStream("src/resources/certfiles/qa-cert.crt"));
+
             StringBuffer pathToCert = new StringBuffer("certfiles/" + buildVariant + "-cert.crt");
-            System.out.println("PATH TO CERT" + pathToCert.toString());
+            System.out.println("PATH TO CERT"  + pathToCert.toString());
             InputStream caInput = NetworkClient.class.getClassLoader().getResourceAsStream(pathToCert.toString());
             Certificate ca;
             try {
