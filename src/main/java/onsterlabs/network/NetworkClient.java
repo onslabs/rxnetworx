@@ -56,6 +56,7 @@ public class NetworkClient {
     public static Retrofit getRestAdapter(String buildVariant, final String baseUrl, final HashMap<String, String> requestHeaderMap) {
         //If input stream is null then the cert file stream is not being provided by the android
         //component .
+        //Sample Comment
         if (mTrustManager == null || mSSLContext == null) {
             createKeyStore(buildVariant);
         }
