@@ -55,9 +55,7 @@ public class NetworkClient {
      * @return
      */
     public static Retrofit getRestAdapter(String buildVariant, final String baseUrl, final HashMap<String, String> requestHeaderMap, boolean isHttps) {
-
         mIsHttps = isHttps;
-
         if (mIsHttps && baseUrl.contains("http://")) {
             throw new IllegalArgumentException("is Https flag has been set to true and url is in http:// formal . " +
                     "Please Rectify ");
