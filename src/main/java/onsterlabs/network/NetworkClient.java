@@ -40,6 +40,7 @@ public class NetworkClient {
 
     private static SSLContext mSSLContext;
     private static X509TrustManager mTrustManager;
+    private boolean mIsHttps;
 
 
     private NetworkClient() {
@@ -53,79 +54,18 @@ public class NetworkClient {
      * @param requestHeaderMap
      * @return
      */
-    public static Retrofit getRestAdapter(String buildVariant, final String baseUrl, final HashMap<String, String> requestHeaderMap) {
+    public static Retrofit getRestAdapter(String buildVariant, final String baseUrl, final HashMap<String, String> requestHeaderMap, boolean isHttps) {
         //If input stream is null then the cert file stream is not being provided by the android
         //component .
         //Sample Comment
-        if (mTrustManager == null || mSSLContext == null) {
-            createKeyStore(buildVariant);
+        Retrofit retrofit;
+
+        if (isHttps) {
+            retrofit = getSecureClient(buildVariant, baseUrl, requestHeaderMap);
+        } else {
+            retrofit = getRegularClient(buildVariant, baseUrl, requestHeaderMap);
         }
-        HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor();
-        httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.HEADERS);
-        httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-
-        Gson gson = new GsonBuilder().addSerializationExclusionStrategy(new ExclusionStrategy() {
-            @Override
-            public boolean shouldSkipField(FieldAttributes fieldAttributes) {
-                final Expose expose = fieldAttributes.getAnnotation(Expose.class);
-                return expose != null && !expose.serialize();
-            }
-
-            @Override
-            public boolean shouldSkipClass(Class<?> aClass) {
-                return false;
-            }
-        }).addDeserializationExclusionStrategy(new ExclusionStrategy() {
-            @Override
-            public boolean shouldSkipField(FieldAttributes fieldAttributes) {
-                final Expose expose = fieldAttributes.getAnnotation(Expose.class);
-                return expose != null && !expose.deserialize();
-            }
-
-            @Override
-            public boolean shouldSkipClass(Class<?> aClass) {
-                return false;
-            }
-        }).create();
-
-        String hostName = "hdfc-qa-kong.tothenew.com";
-        CertificatePinner certificatePinner = new CertificatePinner.Builder().
-                add(hostName, "sha256/U0hBMjU2IEZpbmdlcnByaW50PTgyOjA2OjA5OjZEOjYzOkFCOkFDOkQ2OjM5OjEz\n" +
-                        "OjhGOjQ0OjFGOkY5OjJGOkZFOjBGOjRFOjVDOkE2OkU4OkJDOkU1OjUxOkU0OjJC\n" +
-                        "OkU1OjI3OkZEOkQ5OkVEOjM3Cg==").build();
-        // sslSocketFactory(mSSLContext.getSocketFactory(), mTrustManager)
-        OkHttpClient client = new OkHttpClient.Builder().
-                sslSocketFactory(mSSLContext.getSocketFactory(), mTrustManager)
-                .addInterceptor(new Interceptor() {
-                    @Override
-                    public Response intercept(Chain chain) throws IOException {
-                        Request.Builder builder = chain.request().newBuilder();
-                        Set<Map.Entry<String, String>> entrySet = requestHeaderMap.entrySet();
-                        for (Map.Entry<String, String> entry : entrySet) {
-                            if (entry.getValue() != null) {
-                                if (entry.getValue().isEmpty())
-                                    builder.removeHeader(entry.getKey());
-                                else
-                                    builder.addHeader(entry.getKey(), entry.getValue());
-                            }
-                        }
-
-                        Request request = builder.build();
-                        return chain.proceed(request);
-                    }
-
-
-                })
-                .addInterceptor(httpLoggingInterceptor).writeTimeout(30, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS)
-                .build();
-
-
-        return new Retrofit.Builder()
-                .baseUrl(baseUrl)
-                .client(client)
-                .addConverterFactory(GsonConverterFactory.create(gson))
-                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-                .build();
+        return retrofit;
     }
 
     //Not being used currently
@@ -198,6 +138,147 @@ public class NetworkClient {
     }
 
 
+    private static Retrofit getSecureClient(String buildVariant, final String baseUrl, final HashMap<String, String> requestHeaderMap) {
+        if (mTrustManager == null || mSSLContext == null) {
+            createKeyStore(buildVariant);
+        }
+        HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor();
+        httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.HEADERS);
+        httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+
+        Gson gson = new GsonBuilder().addSerializationExclusionStrategy(new ExclusionStrategy() {
+            @Override
+            public boolean shouldSkipField(FieldAttributes fieldAttributes) {
+                final Expose expose = fieldAttributes.getAnnotation(Expose.class);
+                return expose != null && !expose.serialize();
+            }
+
+            @Override
+            public boolean shouldSkipClass(Class<?> aClass) {
+                return false;
+            }
+        }).addDeserializationExclusionStrategy(new ExclusionStrategy() {
+            @Override
+            public boolean shouldSkipField(FieldAttributes fieldAttributes) {
+                final Expose expose = fieldAttributes.getAnnotation(Expose.class);
+                return expose != null && !expose.deserialize();
+            }
+
+            @Override
+            public boolean shouldSkipClass(Class<?> aClass) {
+                return false;
+            }
+        }).create();
+
+        String hostName = "hdfc-qa-kong.tothenew.com";
+        CertificatePinner certificatePinner = new CertificatePinner.Builder().
+                add(hostName, "sha256/U0hBMjU2IEZpbmdlcnByaW50PTgyOjA2OjA5OjZEOjYzOkFCOkFDOkQ2OjM5OjEz\n" +
+                        "OjhGOjQ0OjFGOkY5OjJGOkZFOjBGOjRFOjVDOkE2OkU4OkJDOkU1OjUxOkU0OjJC\n" +
+                        "OkU1OjI3OkZEOkQ5OkVEOjM3Cg==").build();
+        // sslSocketFactory(mSSLContext.getSocketFactory(), mTrustManager)
+        OkHttpClient client = new OkHttpClient.Builder().
+                sslSocketFactory(mSSLContext.getSocketFactory(), mTrustManager)
+                .addInterceptor(new Interceptor() {
+                    @Override
+                    public Response intercept(Chain chain) throws IOException {
+                        Request.Builder builder = chain.request().newBuilder();
+                        Set<Map.Entry<String, String>> entrySet = requestHeaderMap.entrySet();
+                        for (Map.Entry<String, String> entry : entrySet) {
+                            if (entry.getValue() != null) {
+                                if (entry.getValue().isEmpty())
+                                    builder.removeHeader(entry.getKey());
+                                else
+                                    builder.addHeader(entry.getKey(), entry.getValue());
+                            }
+                        }
+
+                        Request request = builder.build();
+                        return chain.proceed(request);
+                    }
+
+
+                })
+                .addInterceptor(httpLoggingInterceptor).writeTimeout(30, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS)
+                .build();
+
+
+        return new Retrofit.Builder()
+                .baseUrl(baseUrl)
+                .client(client)
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .build();
+    }
+
+
+    private static Retrofit getRegularClient(String buildVariant, final String baseUrl, final HashMap<String, String> requestHeaderMap) {
+
+        HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor();
+        httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.HEADERS);
+        httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+
+        Gson gson = new GsonBuilder().addSerializationExclusionStrategy(new ExclusionStrategy() {
+            @Override
+            public boolean shouldSkipField(FieldAttributes fieldAttributes) {
+                final Expose expose = fieldAttributes.getAnnotation(Expose.class);
+                return expose != null && !expose.serialize();
+            }
+
+            @Override
+            public boolean shouldSkipClass(Class<?> aClass) {
+                return false;
+            }
+        }).addDeserializationExclusionStrategy(new ExclusionStrategy() {
+            @Override
+            public boolean shouldSkipField(FieldAttributes fieldAttributes) {
+                final Expose expose = fieldAttributes.getAnnotation(Expose.class);
+                return expose != null && !expose.deserialize();
+            }
+
+            @Override
+            public boolean shouldSkipClass(Class<?> aClass) {
+                return false;
+            }
+        }).create();
+
+        String hostName = "hdfc-qa-kong.tothenew.com";
+        CertificatePinner certificatePinner = new CertificatePinner.Builder().
+                add(hostName, "sha256/U0hBMjU2IEZpbmdlcnByaW50PTgyOjA2OjA5OjZEOjYzOkFCOkFDOkQ2OjM5OjEz\n" +
+                        "OjhGOjQ0OjFGOkY5OjJGOkZFOjBGOjRFOjVDOkE2OkU4OkJDOkU1OjUxOkU0OjJC\n" +
+                        "OkU1OjI3OkZEOkQ5OkVEOjM3Cg==").build();
+        // sslSocketFactory(mSSLContext.getSocketFactory(), mTrustManager)
+        OkHttpClient client = new OkHttpClient.Builder()
+                .addInterceptor(new Interceptor() {
+                    @Override
+                    public Response intercept(Chain chain) throws IOException {
+                        Request.Builder builder = chain.request().newBuilder();
+                        Set<Map.Entry<String, String>> entrySet = requestHeaderMap.entrySet();
+                        for (Map.Entry<String, String> entry : entrySet) {
+                            if (entry.getValue() != null) {
+                                if (entry.getValue().isEmpty())
+                                    builder.removeHeader(entry.getKey());
+                                else
+                                    builder.addHeader(entry.getKey(), entry.getValue());
+                            }
+                        }
+
+                        Request request = builder.build();
+                        return chain.proceed(request);
+                    }
+
+
+                })
+                .addInterceptor(httpLoggingInterceptor).writeTimeout(30, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS)
+                .build();
+
+
+        return new Retrofit.Builder()
+                .baseUrl(baseUrl)
+                .client(client)
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .build();
+    }
 }
 
 
