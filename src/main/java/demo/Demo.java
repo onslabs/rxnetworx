@@ -24,7 +24,7 @@ public class Demo {
         headerMap.put("Content-Type", "JSON");
         headerMap.put("DUMMY", "DUMMY");
         headerMap.put(AppConstant.AUTHORIZATION, AppConstant.APP_AUTHORIZATION);
-        Retrofit retrofit = NetworkClient.getRestAdapter("qa", AppConstant.BASE_URL, headerMap);
+        Retrofit retrofit = NetworkClient.getRestAdapter("qa", AppConstant.BASE_URL, headerMap, true);
 
         ILoginAPI iLoginAPI = (ILoginAPI) retrofit.create(ILoginAPI.class);
         Observable<LoginResponse> loginResponseObservable = iLoginAPI.loginRequesturl("ARN-1690", "password", "Best@123");
