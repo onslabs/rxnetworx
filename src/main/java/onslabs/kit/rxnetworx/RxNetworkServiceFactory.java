@@ -1,7 +1,9 @@
 package onslabs.kit.rxnetworx;
 
+import java.io.InputStream;
 import java.util.HashMap;
 
+import okhttp3.CertificatePinner;
 import retrofit2.Retrofit;
 
 
@@ -28,6 +30,20 @@ public class RxNetworkServiceFactory {
     public static <S> S getNewInstance(String baseUrl, Class<S> serviceClass,HashMap requestHeaderMap) {
             sDataService = null;
             sDataService = new RxNetworkServiceFactory(RxNetworkClient.getRestAdapter(baseUrl, requestHeaderMap));
+
+        return sDataService.getClient(serviceClass);
+    }
+
+    public static <S> S getHttpsInstance(String hostName, CertificatePinner certificatePinner, InputStream certificateInputStream, String baseUrl, Class<S> serviceClass, HashMap requestHeaderMap) {
+        if (sDataService == null) {
+            sDataService = new RxNetworkServiceFactory(RxNetworkClient.getHttpsRestAdapter(hostName,certificatePinner,certificateInputStream,baseUrl, requestHeaderMap));
+        }
+        return sDataService.getClient(serviceClass);
+    }
+
+    public static <S> S getNewHttpsInstance(String hostName, CertificatePinner certificatePinner, InputStream certificateInputStream, String baseUrl, Class<S> serviceClass, HashMap requestHeaderMap) {
+        sDataService = null;
+        sDataService = new RxNetworkServiceFactory(RxNetworkClient.getHttpsRestAdapter(hostName,certificatePinner,certificateInputStream,baseUrl, requestHeaderMap));
 
         return sDataService.getClient(serviceClass);
     }
