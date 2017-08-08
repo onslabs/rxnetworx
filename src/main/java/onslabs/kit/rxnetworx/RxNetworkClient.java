@@ -137,7 +137,7 @@ public class RxNetworkClient {
         }
     }
 
-    public static Retrofit getHttpsRestAdapter(final String hostName, final CertificatePinner certificatePinner,final InputStream inputStream, final String baseUrl, final HashMap<String, String> requestHeaderMap) {
+    public static Retrofit getHttpsRestAdapter(final InputStream inputStream, final String baseUrl, final HashMap<String, String> requestHeaderMap) {
 
         if (mTrustManager == null || mSSLContext == null) {
             createKeyStore(inputStream);
