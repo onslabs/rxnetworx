@@ -34,16 +34,16 @@ public class RxNetworkServiceFactory {
         return sDataService.getClient(serviceClass);
     }
 
-    public static <S> S getHttpsInstance(String hostName, CertificatePinner certificatePinner, InputStream certificateInputStream, String baseUrl, Class<S> serviceClass, HashMap requestHeaderMap) {
+    public static <S> S getHttpsInstance(InputStream certificateInputStream, String baseUrl, Class<S> serviceClass, HashMap requestHeaderMap) {
         if (sDataService == null) {
-            sDataService = new RxNetworkServiceFactory(RxNetworkClient.getHttpsRestAdapter(hostName,certificatePinner,certificateInputStream,baseUrl, requestHeaderMap));
+            sDataService = new RxNetworkServiceFactory(RxNetworkClient.getHttpsRestAdapter(certificateInputStream,baseUrl, requestHeaderMap));
         }
         return sDataService.getClient(serviceClass);
     }
 
-    public static <S> S getNewHttpsInstance(String hostName, CertificatePinner certificatePinner, InputStream certificateInputStream, String baseUrl, Class<S> serviceClass, HashMap requestHeaderMap) {
+    public static <S> S getNewHttpsInstance(InputStream certificateInputStream, String baseUrl, Class<S> serviceClass, HashMap requestHeaderMap) {
         sDataService = null;
-        sDataService = new RxNetworkServiceFactory(RxNetworkClient.getHttpsRestAdapter(hostName,certificatePinner,certificateInputStream,baseUrl, requestHeaderMap));
+        sDataService = new RxNetworkServiceFactory(RxNetworkClient.getHttpsRestAdapter(certificateInputStream,baseUrl, requestHeaderMap));
 
         return sDataService.getClient(serviceClass);
     }
