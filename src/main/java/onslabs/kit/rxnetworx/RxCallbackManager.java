@@ -28,6 +28,7 @@ public abstract class RxCallbackManager<T> implements Action1<T> {
     public RxCallbackManager(final Scheduler androidScheduler, final String baseUrl, final HashMap<String, String> requestHeaders) {
         this.baseUrl = baseUrl;
         this.requestHeaders = requestHeaders;
+        this.androidScheduler = androidScheduler;
     }
 
     public RxCallbackManager(final Scheduler androidScheduler, final String baseUrl, final InputStream certificateInputStream, final HashMap<String, String> requestHeaders) {

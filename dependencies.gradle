@@ -6,7 +6,7 @@ ext {
             retrofitConverterGson: "com.squareup.retrofit2:converter-gson:$retrofitVersion",
             retrofitAdapterRxJava: "com.squareup.retrofit2:adapter-rxjava:$retrofitVersion",
             loggingInterceptor   : "com.squareup.okhttp3:logging-interceptor:3.4.1",
-            rxAndroid            : 'io.reactivex:rxandroid:1.1.0',
+            rxAndroid            : 'io.reactivex:rxandroid:1.2.1',
 
     ]
 }
