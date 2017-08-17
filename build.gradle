@@ -46,7 +46,8 @@ artifacts {
 
 dependencies {
     Map<String, String> dependencies = rootProject.ext.dependencies
-    compile dependencies.retrofit
+//    compile dependencies.rxAndroid
+    compile dependencies.retrofitAdapterRxJava
     compile dependencies.retrofitConverterGson
     compile dependencies.retrofitAdapterRxJava
     compile(dependencies.loggingInterceptor) {
