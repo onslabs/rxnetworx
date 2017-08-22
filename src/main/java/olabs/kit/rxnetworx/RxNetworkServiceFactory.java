@@ -1,9 +1,8 @@
-package onslabs.kit.rxnetworx;
+package olabs.kit.rxnetworx;
 
 import java.io.InputStream;
 import java.util.HashMap;
 
-import okhttp3.CertificatePinner;
 import retrofit2.Retrofit;
 
 

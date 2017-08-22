@@ -1,4 +1,4 @@
-package onslabs.kit.rxnetworx;
+package olabs.kit.rxnetworx;
 
 
 import rx.Subscription;
