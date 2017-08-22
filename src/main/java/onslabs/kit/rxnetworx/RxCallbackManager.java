@@ -61,13 +61,13 @@ public abstract class RxCallbackManager<T> implements Action1<T> {
     }
 
     @SuppressWarnings("unchecked")
-    protected void initiateApiCall(Class responseType, Observable observable, APISubscriber apiSubscriber) {
+    protected void initiateApiCall(Class responseType, Observable observable) {
         register(RetroError.class);
         register(responseType);
         //register(((ParameterizedType)apiSubscriber.getClass().getGenericSuperclass()).getActualTypeArguments()[0]));
         observable.observeOn(androidScheduler)
                 .subscribeOn(defaultSubscribeScheduler())
-                .subscribe(apiSubscriber);
+                .subscribe(new APISubscriber<T>());
 
     }
 
