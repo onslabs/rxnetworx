@@ -4,8 +4,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 
+import retrofit2.HttpException;
 import retrofit2.Response;
-import retrofit2.adapter.rxjava.HttpException;
 import rx.Observable;
 import rx.Scheduler;
 import rx.Subscriber;
@@ -59,7 +59,7 @@ public abstract class RxCallbackManager<T> {
     }
 
     @SuppressWarnings("unchecked")
-    protected void initiateApiCall(Class responseType, Observable observable) {
+    protected void initiateApiCall(Observable observable) {
         observable.observeOn(androidScheduler)
                 .subscribeOn(defaultSubscribeScheduler())
                 .subscribe(new Subscriber<T>() {
