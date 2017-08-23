@@ -1,28 +1,26 @@
 package olabs.kit.rxnetworx;
 
+import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
+import retrofit2.Response;
+import retrofit2.adapter.rxjava.HttpException;
 import rx.Observable;
 import rx.Scheduler;
-import rx.Subscription;
-import rx.functions.Action1;
+import rx.Subscriber;
 import rx.schedulers.Schedulers;
 
 /**
  * Created by ttnd on 25/11/16.
  */
 
-public abstract class RxCallbackManager<T> implements Action1<T> {
+public abstract class RxCallbackManager<T> {
 
     private String baseUrl;
     private HashMap<String, String> requestHeaders = new HashMap<>();
     private Scheduler defaultSubscribeScheduler;
     private InputStream certificateInputStream;
-    protected HashMap<Class, Subscription> subscriptionsHashMap = new HashMap<>();
-    protected HashMap<Class, List<Subscription>> errorSubscriptions = new HashMap<>();
     protected Scheduler androidScheduler;
 
     public RxCallbackManager(final Scheduler androidScheduler, final String baseUrl, final HashMap<String, String> requestHeaders) {
@@ -62,61 +60,47 @@ public abstract class RxCallbackManager<T> implements Action1<T> {
 
     @SuppressWarnings("unchecked")
     protected void initiateApiCall(Class responseType, Observable observable) {
-        register(RetroError.class);
-        register(responseType);
-        //register(((ParameterizedType)apiSubscriber.getClass().getGenericSuperclass()).getActualTypeArguments()[0]));
         observable.observeOn(androidScheduler)
                 .subscribeOn(defaultSubscribeScheduler())
-                .subscribe(new APISubscriber<T>());
+                .subscribe(new Subscriber<T>() {
+                    @Override
+                    public void onCompleted() {
 
-    }
+                    }
 
-    protected Observable getAPIObservable(Observable observable) {
-        return observable.observeOn(androidScheduler)
-                .subscribeOn(defaultSubscribeScheduler());
-    }
+                    @Override
+                    public void onError(Throwable e) {
+                        RxCallbackManager.this.onError(getRetroError(e));
 
-    @Override
-    public void call(T t) {
-        if (t instanceof RetroError) {
-            onError((RetroError) t);
-        } else {
-            onSuccess(t);
-        }
-        Subscription subscription =  subscriptionsHashMap.get(t.getClass());
-        if(subscription!=null) {
-            subscription.unsubscribe();
-            subscriptionsHashMap.remove(t.getClass());
-        }
-        unRegisterError();
+                    }
+
+                    @Override
+                    public void onNext(T o) {
+                        RxCallbackManager.this.onSuccess(o);
+                    }
+                });
+
     }
 
     public abstract void onError(RetroError errorMessage);
 
     public abstract void onSuccess(T o);
 
-    public void register(Class S){
-        if(S.getName().equals(RetroError.class.getName())){
-            if(errorSubscriptions.get(S)!=null){
-                errorSubscriptions.get(S).add(RxEventBus.getInstance().register(S, this));
-            }else{
-                List<Subscription> errorList = new ArrayList<>();
-                errorList.add(RxEventBus.getInstance().register(S, this));
-                errorSubscriptions.put(S,errorList);
-            }
-        }
-        else
-            subscriptionsHashMap.put(S, RxEventBus.getInstance().register(S, this));
+
+    protected Observable getAPIObservable(Observable observable) {
+        return observable.observeOn(androidScheduler)
+                .subscribeOn(defaultSubscribeScheduler());
     }
 
-    private void unRegisterError(){
-        if(!errorSubscriptions.get(RetroError.class).isEmpty()){
-            int size = errorSubscriptions.get(RetroError.class).size();
-            Subscription subscription = errorSubscriptions.get(RetroError.class).get(size-1);
-            subscription.unsubscribe();
-            errorSubscriptions.get(RetroError.class).remove(size-1);
+    private RetroError getRetroError(Throwable throwable){
 
+        if (throwable instanceof HttpException) {
+            HttpException httpException = (HttpException) throwable;
+            Response response = httpException.response();
+            return new RetroError(RetroError.Kind.HTTP, response.message(),response.code());
         }
+
+        return throwable instanceof IOException ?new RetroError(RetroError.Kind.NETWORK, throwable.getMessage(),-999): new RetroError(RetroError.Kind.UNEXPECTED, throwable.getMessage(), -999);
 
     }
 
