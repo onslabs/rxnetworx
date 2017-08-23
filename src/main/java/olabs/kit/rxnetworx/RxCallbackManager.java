@@ -71,6 +71,10 @@ public abstract class RxCallbackManager<T> implements Action1<T> {
 
     }
 
+    protected Observable getAPIObservable(Observable observable) {
+        return observable.observeOn(androidScheduler)
+                .subscribeOn(defaultSubscribeScheduler());
+    }
 
     @Override
     public void call(T t) {
