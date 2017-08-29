@@ -4,8 +4,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 
-import retrofit2.HttpException;
 import retrofit2.Response;
+import retrofit2.adapter.rxjava.HttpException;
 import rx.Observable;
 import rx.Scheduler;
 import rx.Subscriber;
@@ -71,7 +71,6 @@ public abstract class RxCallbackManager<T> {
                     @Override
                     public void onError(Throwable e) {
                         RxCallbackManager.this.onError(getRetroError(e));
-
                     }
 
                     @Override
