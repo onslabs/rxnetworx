@@ -71,7 +71,6 @@ public abstract class RxCallbackManager<T> {
                     @Override
                     public void onError(Throwable e) {
                         RxCallbackManager.this.onError(getRetroError(e));
-
                     }
 
                     @Override
