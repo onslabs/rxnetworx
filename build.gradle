@@ -8,8 +8,8 @@ buildscript {
     }
 
     tasks.withType(JavaCompile) {
-        sourceCompatibility = '1.7'
-        targetCompatibility = '1.7'
+        targetCompatibility = 1.8
+        sourceCompatibility = 1.8
     }
 }
 repositories {
@@ -44,8 +44,6 @@ artifacts {
 }
 
 
-targetCompatibility = 1.8
-sourceCompatibility = 1.8
 dependencies {
     Map<String, String> dependencies = rootProject.ext.dependencies
 //    compile dependencies.rxAndroid
