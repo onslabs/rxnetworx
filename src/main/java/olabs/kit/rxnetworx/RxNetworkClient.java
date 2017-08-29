@@ -22,7 +22,6 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 
-import okhttp3.CertificatePinner;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -74,15 +73,14 @@ public class RxNetworkClient {
                     @Override
                     public Response intercept(Chain chain) throws IOException {
                         Request.Builder builder = chain.request().newBuilder();
-                        Set<Map.Entry<String, String>> entrySet = requestHeaderMap.entrySet();
-                        for (Map.Entry<String, String> entry : entrySet) {
-                            if (entry.getValue() != null) {
-                                if (entry.getValue().isEmpty())
-                                    builder.removeHeader(entry.getKey());
+                        requestHeaderMap.forEach((key,value)->{
+                            if(value!=null){
+                                if (value.isEmpty())
+                                    builder.removeHeader(key);
                                 else
-                                    builder.addHeader(entry.getKey(), entry.getValue());
+                                    builder.addHeader(key, value);
                             }
-                        }
+                        });
 
                         Request request = builder.build();
                         return chain.proceed(request);
@@ -172,25 +170,18 @@ public class RxNetworkClient {
 
         OkHttpClient client = new OkHttpClient.Builder().
                 sslSocketFactory(mSSLContext.getSocketFactory(), mTrustManager)
-                .addInterceptor(new Interceptor() {
-                    @Override
-                    public Response intercept(Chain chain) throws IOException {
-                        Request.Builder builder = chain.request().newBuilder();
-                        Set<Map.Entry<String, String>> entrySet = requestHeaderMap.entrySet();
-                        for (Map.Entry<String, String> entry : entrySet) {
-                            if (entry.getValue() != null) {
-                                if (entry.getValue().isEmpty())
-                                    builder.removeHeader(entry.getKey());
-                                else
-                                    builder.addHeader(entry.getKey(), entry.getValue());
-                            }
+                .addInterceptor(chain -> {
+                    Request.Builder builder = chain.request().newBuilder();
+                    requestHeaderMap.forEach((key,value)->{
+                        if(value!=null){
+                            if (value.isEmpty())
+                                builder.removeHeader(key);
+                            else
+                                builder.addHeader(key, value);
                         }
-
-                        Request request = builder.build();
-                        return chain.proceed(request);
-                    }
-
-
+                    });
+                    Request request = builder.build();
+                    return chain.proceed(request);
                 })
                 .addInterceptor(httpLoggingInterceptor).writeTimeout(30, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS)
                 .build();
