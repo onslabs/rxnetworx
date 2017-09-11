@@ -73,14 +73,15 @@ public class RxNetworkClient {
                     @Override
                     public Response intercept(Chain chain) throws IOException {
                         Request.Builder builder = chain.request().newBuilder();
-                        requestHeaderMap.forEach((key,value)->{
-                            if(value!=null){
-                                if (value.isEmpty())
-                                    builder.removeHeader(key);
+                        Set<Map.Entry<String, String>> entrySet = requestHeaderMap.entrySet();
+                        for (Map.Entry<String, String> entry : entrySet) {
+                            if (entry.getValue() != null) {
+                                if (entry.getValue().isEmpty())
+                                    builder.removeHeader(entry.getKey());
                                 else
-                                    builder.addHeader(key, value);
+                                    builder.addHeader(entry.getKey(), entry.getValue());
                             }
-                        });
+                        }
 
                         Request request = builder.build();
                         return chain.proceed(request);
@@ -170,18 +171,26 @@ public class RxNetworkClient {
 
         OkHttpClient client = new OkHttpClient.Builder().
                 sslSocketFactory(mSSLContext.getSocketFactory(), mTrustManager)
-                .addInterceptor(chain -> {
-                    Request.Builder builder = chain.request().newBuilder();
-                    requestHeaderMap.forEach((key,value)->{
-                        if(value!=null){
-                            if (value.isEmpty())
-                                builder.removeHeader(key);
-                            else
-                                builder.addHeader(key, value);
+                .authenticator(new TokenAuthenticator())
+                .addInterceptor(new Interceptor() {
+                    @Override
+                    public Response intercept(Chain chain) throws IOException {
+                        Request.Builder builder = chain.request().newBuilder();
+                        Set<Map.Entry<String, String>> entrySet = requestHeaderMap.entrySet();
+                        for (Map.Entry<String, String> entry : entrySet) {
+                            if (entry.getValue() != null) {
+                                if (entry.getValue().isEmpty())
+                                    builder.removeHeader(entry.getKey());
+                                else
+                                    builder.addHeader(entry.getKey(), entry.getValue());
+                            }
                         }
-                    });
-                    Request request = builder.build();
-                    return chain.proceed(request);
+
+                        Request request = builder.build();
+                        return chain.proceed(request);
+                    }
+
+
                 })
                 .addInterceptor(httpLoggingInterceptor).writeTimeout(30, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS)
                 .build();

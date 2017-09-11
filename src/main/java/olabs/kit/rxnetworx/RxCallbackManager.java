@@ -103,4 +103,12 @@ public abstract class RxCallbackManager<T> {
 
     }
 
+    public void updateBaseUrl(String baseUrl ){
+        this.baseUrl = baseUrl;
+    }
+
+    public void updateHeaderConfiguration(HashMap  headerConfiguration ){
+        this.requestHeaders.putAll(headerConfiguration);
+    }
+
 }
