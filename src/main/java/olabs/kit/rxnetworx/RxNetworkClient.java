@@ -171,7 +171,7 @@ public class RxNetworkClient {
 
         OkHttpClient client = new OkHttpClient.Builder().
                 sslSocketFactory(mSSLContext.getSocketFactory(), mTrustManager)
-                .authenticator(new TokenAuthenticator())
+                //.authenticator(new TokenAuthenticator()
                 .addInterceptor(new Interceptor() {
                     @Override
                     public Response intercept(Chain chain) throws IOException {
